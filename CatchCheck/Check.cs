@@ -252,7 +252,7 @@ namespace CatchCheck
         }
     }
 
-    [Check]
+    // [Check]
     public class CheckEdgeDash : BeatmapCheck
     {
         
