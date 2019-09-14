@@ -251,4 +251,97 @@ namespace CatchCheck
             }
         }
     }
+
+    [Check]
+    public class CheckEdgeDash : BeatmapCheck
+    {
+        
+        public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
+        {   
+            Modes = new Beatmap.Mode[]
+            {
+                Beatmap.Mode.Catch
+            },
+
+            Category = "Compose",
+            Message = "Edge Dashes.",
+            Author = "-Keitaro",
+
+            Documentation = new Dictionary<string, string>()
+            {
+                {
+                    "Purpose",
+                    @"
+                    soon."
+                },
+                {
+                    "Reasoning",
+                    @"
+                    tm."
+                }
+            }
+        };
+
+        public override Dictionary<string, IssueTemplate> GetTemplates()
+        {
+            return new Dictionary<string, IssueTemplate>()
+            {
+                { "Warning",
+                    new IssueTemplate(Issue.Level.Warning,
+                        "{0} Edge dash ({1})",
+                        "timestamp - ", "distance")
+                    .WithCause(
+                        "soon") },
+				{ "Problem",
+                    new IssueTemplate(Issue.Level.Problem,
+                        "{0} Edge dash ({1})",
+                        "timestamp - ", "distance")
+                    .WithCause(
+                        "soon") },
+                { "Problem",
+                    new IssueTemplate(Issue.Level.Minor,
+                        "{0} Edge dash ({1})",
+                        "timestamp - ", "distance")
+                    .WithCause(
+                        "soon") }
+            };
+        }
+
+        public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
+        {
+            var gen = new Generator();
+            
+            List<CatchHitObject> catchObjects = gen.GenerateCatchObjects(aBeatmap);
+            gen.initialiseHypers(catchObjects, aBeatmap);
+
+            for (var i = 0; i < catchObjects.Count; i++) {
+                CatchHitObject currentObject = catchObjects[i];
+
+                var distanceToHDash = currentObject.DistanceToHyperDash;
+                if (distanceToHDash == 0) { continue; }
+                if (distanceToHDash < 10) {
+                    yield return new Issue(
+                        GetTemplate("Problem"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject.time),
+                        distanceToHDash
+                    ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal, Beatmap.Difficulty.Hard);
+
+                    yield return new Issue(
+                        GetTemplate("Warning"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject.time),
+                        distanceToHDash
+                    ).ForDifficulties(Beatmap.Difficulty.Insane, Beatmap.Difficulty.Expert, Beatmap.Difficulty.Ultra);
+                } else if (distanceToHDash < 25) {
+                    yield return new Issue(
+                        GetTemplate("Minor"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject.time),
+                        distanceToHDash
+                    );
+                }
+            }
+        }
+    }
 }
