@@ -1,0 +1,141 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.0/",
+    "signature": "c53ba0018fa3e8c6daec0a54ce07aa6db5908144"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.0": {},
+    ".NETStandard,Version=v2.0/": {
+      "CatchCheck/1.0.0": {
+        "dependencies": {
+          "MapsetParser": "1.0.0",
+          "MapsetVerifierFramework": "1.0.0",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "CatchCheck.dll": {}
+        }
+      },
+      "ManagedBass/2.0.4": {
+        "runtime": {
+          "lib/netstandard1.4/ManagedBass.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "NAudio/1.9.0": {
+        "runtime": {
+          "lib/netstandard2.0/NAudio.dll": {
+            "assemblyVersion": "1.9.0.0",
+            "fileVersion": "1.9.0.0"
+          }
+        }
+      },
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
+        }
+      },
+      "System.Numerics.Vectors/4.5.0": {
+        "runtime": {
+          "lib/netstandard2.0/System.Numerics.Vectors.dll": {
+            "assemblyVersion": "4.1.4.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        }
+      },
+      "TagLib.Portable/1.1.0": {
+        "dependencies": {
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard1.6/TagLib.Portable.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
+      },
+      "MapsetParser/1.0.0": {
+        "dependencies": {
+          "System.Numerics.Vectors": "4.5.0"
+        },
+        "runtime": {
+          "MapsetParser.dll": {}
+        }
+      },
+      "MapsetVerifierFramework/1.0.0": {
+        "dependencies": {
+          "ManagedBass": "2.0.4",
+          "MapsetParser": "1.0.0",
+          "NAudio": "1.9.0",
+          "TagLib.Portable": "1.1.0"
+        },
+        "runtime": {
+          "MapsetVerifierFramework.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CatchCheck/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ManagedBass/2.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+jpks5wa2CAGsT/nQJiv493+KBNujreMOZ2U19r2qsddIst/TQQiueMODSOLgyncODTBIQM3mGDiCHSXXs7ACg==",
+      "path": "managedbass/2.0.4",
+      "hashPath": "managedbass.2.0.4.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "NAudio/1.9.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PjcPhL5AnbF1YmZxqFYuAEVVRNCNWWIm6Gi32AGQ0dmHF9+s7TUFfVxEo46MbeIfpUE+Wz60ZNTLMXTxBI1m9w==",
+      "path": "naudio/1.9.0",
+      "hashPath": "naudio.1.9.0.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
+    },
+    "System.Numerics.Vectors/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QQTlPTl06J/iiDbJCiepZ4H//BVraReU4O4EoRw1U02H5TLUIT7xn3GnDp9AXPSlJUDyFs4uWjWafNX6WrAojQ==",
+      "path": "system.numerics.vectors/4.5.0",
+      "hashPath": "system.numerics.vectors.4.5.0.nupkg.sha512"
+    },
+    "TagLib.Portable/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-g12CxMGS3Te6XjCf6cDgAS0OuIwKRl1/D+zrPglmYTH7bf6FA0jQH7YnqBTJq5nQ5zzfHeiH6SLoRBf61O8sxA==",
+      "path": "taglib.portable/1.1.0",
+      "hashPath": "taglib.portable.1.1.0.nupkg.sha512"
+    },
+    "MapsetParser/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MapsetVerifierFramework/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
