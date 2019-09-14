@@ -80,62 +80,63 @@ namespace CatchCheck
             for (var i = 0; i < catchObjects.Count; i++) {
                 CatchHitObject currentObject = catchObjects[i];
             
-                if (currentObject.HyperDash) {
-                    // No HDash on Cup and Platter
+                // Skip object that doesn't use HDash
+                if (!currentObject.HyperDash) { continue; }
+
+                // No HDash on Cup and Platter
+                yield return new Issue(
+                    GetTemplate("Problem"),
+                    aBeatmap,
+                    Timestamp.Get(currentObject),
+                    Timestamp.Get(currentObject.HyperDashTarget),
+                    currentObject.DistanceToHyperDash.ToString()
+                ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal);
+                
+                double delta = currentObject.HyperDashTarget.time - currentObject.time;
+
+                if (delta < 62) {
+                    // 62ms length minimum for Rain
                     yield return new Issue(
-                        GetTemplate("Problem"),
+                        GetTemplate("Problem Time"),
                         aBeatmap,
                         Timestamp.Get(currentObject),
-                        Timestamp.Get(currentObject.HyperDashTarget)
-                    ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal);
-                    
-                    double delta = currentObject.HyperDashTarget.time - currentObject.time;
+                        delta,
+                        62).ForDifficulties(Beatmap.Difficulty.Insane);
+                } else if (delta < 125) {
+                    // 125ms length minimum for Platter
+                    yield return new Issue(
+                        GetTemplate("Problem Time"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject),
+                        delta,
+                        125).ForDifficulties(Beatmap.Difficulty.Hard);
+                }
 
-                    if (delta < 62) {
-                        // 62ms length minimum for Rain
-                        yield return new Issue(
-                            GetTemplate("Problem Time"),
-                            aBeatmap,
-                            Timestamp.Get(currentObject),
-                            delta,
-                            62).ForDifficulties(Beatmap.Difficulty.Insane);
-                    } else if (delta < 125) {
-                        // 125ms length minimum for Platter
-                        yield return new Issue(
-                            GetTemplate("Problem Time"),
-                            aBeatmap,
-                            Timestamp.Get(currentObject),
-                            delta,
-                            125).ForDifficulties(Beatmap.Difficulty.Hard);
-                    }
-
-                    var count = 1;
-                    var nextObject = currentObject.HyperDashTarget;
-                    
-                    while (nextObject.HyperDash) {
-                        count++;
-                        nextObject = nextObject.HyperDashTarget;
-                    }
-                    
-                    if (count >= 4) {
-                        // 4 and more consecutive HDashes isn't allowed in Rain
-                        yield return new Issue(
-                            GetTemplate("Problem Dashes"),
-                            aBeatmap,
-                            Timestamp.Get(currentObject.time),
-                            count).ForDifficulties(Beatmap.Difficulty.Insane);
-                    } else if (count >= 2) {
-                        // 2 and more consecutive HDashes isn't allowed in Platter
-                        yield return new Issue(
-                            GetTemplate("Problem Dashes"),
-                            aBeatmap,
-                            Timestamp.Get(currentObject.time),
-                            count
-                            ).ForDifficulties(Beatmap.Difficulty.Hard);
-                    }
+                var count = 1;
+                var nextObject = currentObject.HyperDashTarget;
+                
+                while (nextObject.HyperDash) {
+                    count++;
+                    nextObject = nextObject.HyperDashTarget;
+                }
+                
+                if (count >= 4) {
+                    // 4 and more consecutive HDashes isn't allowed in Rain
+                    yield return new Issue(
+                        GetTemplate("Problem Dashes"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject.time),
+                        count).ForDifficulties(Beatmap.Difficulty.Insane);
+                } else if (count >= 2) {
+                    // 2 and more consecutive HDashes isn't allowed in Platter
+                    yield return new Issue(
+                        GetTemplate("Problem Dashes"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject.time),
+                        count
+                        ).ForDifficulties(Beatmap.Difficulty.Hard);
                 }
             }
-
         }
     }
     
