@@ -26,29 +26,19 @@ namespace CatchCheck.helper
 
     public class Generator
     {
-        public const float CATCHER_SIZE = 106.75f;
-        public const float BASE_WIDTH = 512;
-        public const double BASE_SPEED = 1.0 / 512;
         public List<CatchHitObject> GenerateCatchObjects(Beatmap aBeatmap)
         {
             List<HitObject> mapObjects = aBeatmap.hitObjects;
             List<CatchHitObject> objects = new List<CatchHitObject>();
+
             foreach (Slider mapObject in mapObjects.OfType<Slider>())
             {
                 List<CatchHitObject> objectExtras = new List<CatchHitObject>();
-                string[] origCode = mapObject.code.Split(',');
+                string[] objectCode = String.Copy(mapObject.code).Split(',');
+
+                // Slider ticks
                 foreach (double ticktimes in mapObject.sliderTickTimes)
                 {
-                    string[] objectCode = String.Copy(mapObject.code).Split(',');
-                    objectCode[0] = Math.Round(mapObject.GetPathPosition(ticktimes).X).ToString();
-                    objectCode[2] = ticktimes.ToString();
-                    string line = String.Join(",", objectCode);
-                    CatchHitObject node = new CatchHitObject(String.Copy(line).Split(','), aBeatmap);
-                    objectExtras.Add(node);
-                }
-                foreach (double ticktimes in GetEdgeTimes(mapObject))
-                {
-                    string[] objectCode = String.Copy(mapObject.code).Split(',');
                     objectCode[0] = Math.Round(mapObject.GetPathPosition(ticktimes).X).ToString();
                     objectCode[2] = ticktimes.ToString();
                     string line = String.Join(",", objectCode);
@@ -56,7 +46,17 @@ namespace CatchCheck.helper
                     objectExtras.Add(node);
                 }
 
-                CatchHitObject sliderObject = new CatchHitObject(origCode, aBeatmap);
+                foreach (double ticktimes in GetEdgeTimes(mapObject))
+                {
+                    // Slider repeats and tail
+                    objectCode[0] = Math.Round(mapObject.GetPathPosition(ticktimes).X).ToString();
+                    objectCode[2] = ticktimes.ToString();
+                    string line = String.Join(",", objectCode);
+                    CatchHitObject node = new CatchHitObject(String.Copy(line).Split(','), aBeatmap);
+                    objectExtras.Add(node);
+                }
+
+                CatchHitObject sliderObject = new CatchHitObject(mapObject.code.Split(','), aBeatmap);
                 sliderObject.Extras = objectExtras;
                 objects.Add(sliderObject);
             }
@@ -65,11 +65,13 @@ namespace CatchCheck.helper
             {
                 if (mapObject is Slider)
                 {
+                    // Skip slider object because we have added it before
                     continue;
                 }
                 CatchHitObject hitObject = new CatchHitObject(mapObject.code.Split(','), aBeatmap);
                 objects.Add(hitObject);
             }
+
             objects.Sort((h1, h2) => h1.time.CompareTo(h2.time));
             return objects;
         }
@@ -83,24 +85,33 @@ namespace CatchCheck.helper
         public void initialiseHypers(List<CatchHitObject> mapObjects, Beatmap aBeatmap)
         {
             List<CatchHitObject> objectWithDroplets = new List<CatchHitObject>();
+
             foreach (var currentObject in mapObjects)
             {
+                // Skip spinner because it's just random bananas and no actual Hit Object
                 if (currentObject.GetObjectType() == "Spinner") { continue; }
                 objectWithDroplets.Add(currentObject);
+
+                // If object isnt Slider, just skip it
                 if (currentObject.Extras == null) { continue; }
+
                 foreach (var sliderNode in currentObject.Extras) {
                     objectWithDroplets.Add(sliderNode);
                 }
             }
             objectWithDroplets.Sort((h1, h2) => h1.time.CompareTo(h2.time));
             
-            double adjuDiff = (aBeatmap.difficultySettings.circleSize - 5.0) / 5.0;
-            float catcherWidth = (float)(64 * (1.0 - 0.7 * adjuDiff)) / 128f;
+            // Taken from Modding Assistant as osu-lazer seems broken
+            // https://github.com/rorre/decompiled-MA/blob/master/Modding%20assistant/osu/DiffCalc/BeatmapDifficultyCalculatorFruits.cs
+            double adjustDiff = (aBeatmap.difficultySettings.circleSize - 5.0) / 5.0;
+            float catcherWidth = (float)(64 * (1.0 - 0.7 * adjustDiff)) / 128f;
             float num2 = 305f * catcherWidth * 0.7f;
             double halfCatcherWidth = num2 / 2;
             int lastDirection = 0;
             double lastExcess = halfCatcherWidth;
 
+            // https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Catch/Beatmaps/CatchBeatmapProcessor.cs#L190
+            // With modifications taken from Modding Assistant
             for (int i = 0; i < objectWithDroplets.Count - 1; i++)
             {
                 CatchHitObject currentObject = objectWithDroplets[i];
@@ -127,6 +138,7 @@ namespace CatchCheck.helper
 
         }
 
+        // https://github.com/ppy/osuTK/blob/master/src/osuTK/Math/MathHelper.cs#L303
         public static double Clamp(double n, double min, double max)
         {
             return Math.Max(Math.Min(n, max), min);
