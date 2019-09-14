@@ -88,8 +88,7 @@ namespace CatchCheck
                     GetTemplate("Problem"),
                     aBeatmap,
                     Timestamp.Get(currentObject),
-                    Timestamp.Get(currentObject.HyperDashTarget),
-                    currentObject.DistanceToHyperDash.ToString()
+                    Timestamp.Get(currentObject.HyperDashTarget)
                 ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal);
                 
                 double delta = currentObject.HyperDashTarget.time - currentObject.time;
@@ -101,7 +100,8 @@ namespace CatchCheck
                         aBeatmap,
                         Timestamp.Get(currentObject),
                         delta,
-                        62).ForDifficulties(Beatmap.Difficulty.Insane);
+                        62
+                    ).ForDifficulties(Beatmap.Difficulty.Insane);
                 } else if (delta < 125) {
                     // 125ms length minimum for Platter
                     yield return new Issue(
@@ -109,15 +109,18 @@ namespace CatchCheck
                         aBeatmap,
                         Timestamp.Get(currentObject),
                         delta,
-                        125).ForDifficulties(Beatmap.Difficulty.Hard);
+                        125
+                    ).ForDifficulties(Beatmap.Difficulty.Hard);
                 }
 
                 var count = 1;
                 var nextObject = currentObject.HyperDashTarget;
                 
                 while (nextObject.HyperDash) {
+                    CatchHitObject curNextObject = nextObject;
                     count++;
-                    nextObject = nextObject.HyperDashTarget;
+                    nextObject = curNextObject.HyperDashTarget;
+                    curNextObject.HyperDashTarget = null;
                 }
                 
                 if (count >= 4) {
@@ -126,15 +129,18 @@ namespace CatchCheck
                         GetTemplate("Problem Dashes"),
                         aBeatmap,
                         Timestamp.Get(currentObject.time),
-                        count).ForDifficulties(Beatmap.Difficulty.Insane);
-                } else if (count >= 2) {
+                        count
+                    ).ForDifficulties(Beatmap.Difficulty.Insane);
+                }
+
+                if (count >= 2) {
                     // 2 and more consecutive HDashes isn't allowed in Platter
                     yield return new Issue(
                         GetTemplate("Problem Dashes"),
                         aBeatmap,
                         Timestamp.Get(currentObject.time),
                         count
-                        ).ForDifficulties(Beatmap.Difficulty.Hard);
+                    ).ForDifficulties(Beatmap.Difficulty.Hard);
                 }
             }
         }
