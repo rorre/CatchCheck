@@ -252,7 +252,7 @@ namespace CatchCheck
         }
     }
 
-    // [Check]
+    [Check]
     public class CheckEdgeDash : BeatmapCheck
     {
         
@@ -298,7 +298,7 @@ namespace CatchCheck
                         "timestamp - ", "distance")
                     .WithCause(
                         "soon") },
-                { "Problem",
+                { "Minor",
                     new IssueTemplate(Issue.Level.Minor,
                         "{0} Edge dash ({1})",
                         "timestamp - ", "distance")
@@ -319,7 +319,7 @@ namespace CatchCheck
 
                 var distanceToHDash = currentObject.DistanceToHyperDash;
                 if (distanceToHDash == 0) { continue; }
-                if (distanceToHDash < 10) {
+                if (distanceToHDash < 25) {
                     yield return new Issue(
                         GetTemplate("Problem"),
                         aBeatmap,
@@ -333,7 +333,7 @@ namespace CatchCheck
                         Timestamp.Get(currentObject.time),
                         distanceToHDash
                     ).ForDifficulties(Beatmap.Difficulty.Insane, Beatmap.Difficulty.Expert, Beatmap.Difficulty.Ultra);
-                } else if (distanceToHDash < 25) {
+                } else if (distanceToHDash < 50) {
                     yield return new Issue(
                         GetTemplate("Minor"),
                         aBeatmap,
