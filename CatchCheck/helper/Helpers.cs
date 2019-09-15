@@ -24,7 +24,7 @@ namespace CatchCheck.helper
   
     }
 
-    public class Generator
+    public class ObjectManager
     {
         public List<CatchHitObject> GenerateCatchObjects(Beatmap aBeatmap)
         {

@@ -72,10 +72,10 @@ namespace CatchCheck
 
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
-            var gen = new Generator();
+            var FruitsObjectManager = new ObjectManager();
             
-            List<CatchHitObject> catchObjects = gen.GenerateCatchObjects(aBeatmap);
-            gen.initialiseHypers(catchObjects, aBeatmap);
+            List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
+            FruitsObjectManager.initialiseHypers(catchObjects, aBeatmap);
 
             for (var i = 0; i < catchObjects.Count; i++) {
                 CatchHitObject currentObject = catchObjects[i];
@@ -358,10 +358,10 @@ namespace CatchCheck
 
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
-            var gen = new Generator();
+            var FruitsObjectManager = new ObjectManager();
             
-            List<CatchHitObject> catchObjects = gen.GenerateCatchObjects(aBeatmap);
-            gen.initialiseHypers(catchObjects, aBeatmap);
+            List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
+            FruitsObjectManager.initialiseHypers(catchObjects, aBeatmap);
 
             for (var i = 0; i < catchObjects.Count; i++) {
                 CatchHitObject currentObject = catchObjects[i];
