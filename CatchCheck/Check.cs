@@ -102,7 +102,9 @@ namespace CatchCheck
                         delta,
                         62
                     ).ForDifficulties(Beatmap.Difficulty.Insane);
-                } else if (delta < 125) {
+                }
+                
+                if (delta < 125) {
                     // 125ms length minimum for Platter
                     yield return new Issue(
                         GetTemplate("Problem Time"),
@@ -181,46 +183,41 @@ namespace CatchCheck
             {
                 { "Problem Previous",
                     new IssueTemplate(Issue.Level.Problem,
-                        "{0} Spinner gap between previous object is too short ({1}, expected {2}).",
+                        "{0} Spinner gap between previous object is too short ({1}ms, expected {2}ms).",
                         "timestamp - ", "duration", "duration")
                     .WithCause(
                         "soon") },
                 { "Problem Next",
                     new IssueTemplate(Issue.Level.Problem,
-                        "{0} Spinner gap between next object is too short ({1}, expected {2}).",
+                        "{0} Spinner gap between next object is too short ({1}ms, expected {2}ms).",
+                        "timestamp - ", "duration", "duration")
+                    .WithCause(
+                        "soon") },
+                { "Minor Previous",
+                    new IssueTemplate(Issue.Level.Minor,
+                        "{0} Spinner gap between previous object is too short ({1}ms, expected {2}ms) -- but it's a spinner.",
+                        "timestamp - ", "duration", "duration")
+                    .WithCause(
+                        "soon") },
+                { "Minor Next",
+                    new IssueTemplate(Issue.Level.Minor,
+                        "{0} Spinner gap between next object is too short ({1}ms, expected {2}ms) -- but it's a spinner.",
                         "timestamp - ", "duration", "duration")
                     .WithCause(
                         "soon") }
             };
         }
 
+        private string GetKind(bool aBool)
+        {
+            return aBool ? "Minor" : "Problem";
+        }
+
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
             HitObject hitObject = default(HitObject);
-            Beatmap.Difficulty mapDifficulty = aBeatmap.GetDifficulty(true);
             float requirePreviousTime = 0.0f;
             float requireNextTime = 0.0f;
-
-            switch (mapDifficulty)
-            {
-                case Beatmap.Difficulty.Easy:
-                        requirePreviousTime = requireNextTime = 250;
-                        break;
-                case Beatmap.Difficulty.Normal:
-                        requirePreviousTime = requireNextTime = 250;
-                        break;
-                case Beatmap.Difficulty.Hard:
-                        requirePreviousTime = 125;
-                        requireNextTime = 250;
-                        break;
-                case Beatmap.Difficulty.Insane:
-                        requirePreviousTime = requireNextTime = 125;
-                        break;
-                default:
-                        requirePreviousTime = 62;
-                        requireNextTime = 125;
-                        break;
-            }
 
             for (var i = 0; i < aBeatmap.hitObjects.Count; i++) {
                 var nextTime = 0.0;
@@ -228,24 +225,76 @@ namespace CatchCheck
                 hitObject = aBeatmap.hitObjects[i];
 
                 if (hitObject is Spinner) {
+                    bool isPreviousSpinner = false;
+                    bool isNextSpinner = false;
+
                     if (i-1 >= 0) {
                         var previousObject = aBeatmap.hitObjects[i-1];
                         previousTime = hitObject.time - previousObject.time;
+                        isPreviousSpinner = previousObject is Spinner;
                     }
 
                     if (i+1 < aBeatmap.hitObjects.Count) {
                         var nextObject = aBeatmap.hitObjects[i+1];
-                        nextTime = nextObject.time - hitObject.GetEndTime();    
+                        nextTime = nextObject.time - hitObject.GetEndTime();
+                        isNextSpinner = nextObject is Spinner;
                     }
 
-                    if (previousTime < requirePreviousTime && previousTime != 0.0) {
-                        yield return new Issue(GetTemplate("Problem Previous"), aBeatmap, Timestamp.Get(hitObject),
-                        $"{(int)previousTime}", $"{(int)requirePreviousTime}");
+                    if (previousTime < 62 && previousTime != 0.0) {
+                        if (isPreviousSpinner)
+                        yield return new Issue(
+                            GetTemplate(GetKind(isPreviousSpinner) + " Previous"),
+                            aBeatmap,
+                            Timestamp.Get(hitObject),
+                            $"{(int)previousTime}",
+                            $"{(int)requirePreviousTime}"
+                        ).ForDifficulties(
+                            Beatmap.Difficulty.Expert,
+                            Beatmap.Difficulty.Ultra
+                        );
+                    }
+                    
+                    if (previousTime < 125 && previousTime != 0.0) {
+                        yield return new Issue(
+                            GetTemplate(GetKind(isPreviousSpinner) + " Previous"),
+                            aBeatmap,
+                            Timestamp.Get(hitObject),
+                            $"{(int)previousTime}",
+                            $"{(int)requirePreviousTime}"
+                        ).ForDifficulties(
+                            Beatmap.Difficulty.Easy,
+                            Beatmap.Difficulty.Normal,
+                            Beatmap.Difficulty.Hard,
+                            Beatmap.Difficulty.Insane
+                        );
                     }
 
-                    if (nextTime < requireNextTime && nextTime != 0.0) {
-                        yield return new Issue(GetTemplate("Problem Next"), aBeatmap, Timestamp.Get(hitObject),
-                        $"{(int)nextTime}", $"{(int)requireNextTime}");
+                    if (nextTime < 125 && nextTime != 0.0) {
+                        yield return new Issue(
+                            GetTemplate(GetKind(isNextSpinner) + " Next"),
+                            aBeatmap,
+                            Timestamp.Get(hitObject),
+                            $"{(int)nextTime}",
+                            $"{(int)requireNextTime}"
+                        ).ForDifficulties(
+                            Beatmap.Difficulty.Insane,
+                            Beatmap.Difficulty.Expert,
+                            Beatmap.Difficulty.Ultra
+                        );
+                    }
+                    
+                    if (nextTime < 250 && nextTime != 0.0) {
+                        yield return new Issue(
+                            GetTemplate(GetKind(isNextSpinner) + " Next"),
+                            aBeatmap,
+                            Timestamp.Get(hitObject),
+                            $"{(int)nextTime}",
+                            $"{(int)requireNextTime}"
+                        ).ForDifficulties(
+                            Beatmap.Difficulty.Easy,
+                            Beatmap.Difficulty.Normal,
+                            Beatmap.Difficulty.Hard
+                        );
                     }
                 }
             }
