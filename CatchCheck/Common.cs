@@ -6,7 +6,7 @@ using System.Text;
 using MapsetParser.objects;
 using MapsetParser.objects.hitobjects;
 
-namespace CatchCheck.helper
+namespace CatchCheck
 {
     public class CatchHitObject : HitObject
     {
