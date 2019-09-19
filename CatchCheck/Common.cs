@@ -18,6 +18,7 @@ namespace CatchCheck
 
         public float x;
         public float DistanceToHyperDash { get; set; }
+        public double PixelsToHyperDash { get; set; }
         public bool HyperDash => HyperDashTarget != null;
         public CatchHitObject HyperDashTarget;
         public List<CatchHitObject> Extras { get; set; }
@@ -130,6 +131,8 @@ namespace CatchCheck
                 else
                 {
                     currentObject.DistanceToHyperDash = distanceToHyper;
+                    double requiredAbsolute = distanceToHyper + distanceToNext + (lastDirection == thisDirection ? lastExcess : halfCatcherWidth);
+                    currentObject.PixelsToHyperDash = requiredAbsolute - Math.Abs(nextObject.x - currentObject.x);
                     lastExcess = Clamp(distanceToHyper, 0, halfCatcherWidth);
                 }
 

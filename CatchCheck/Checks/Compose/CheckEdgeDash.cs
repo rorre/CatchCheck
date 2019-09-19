@@ -50,20 +50,20 @@ namespace CatchCheck.Check.Compose
             {
                 { "Warning",
                     new IssueTemplate(Issue.Level.Warning,
-                        "{0} Edge dash ({1})",
-                        "timestamp - ", "distance")
+                        "{0} Edge dash ({1}px to hyperdash to {2})",
+                        "timestamp - ", "distance", "timestamp - ")
                     .WithCause(
                         "soon") },
 				{ "Problem",
                     new IssueTemplate(Issue.Level.Problem,
-                        "{0} Edge dash ({1})",
-                        "timestamp - ", "distance")
+                        "{0} Edge dash ({1}px to hyperdash to {2})",
+                        "timestamp - ", "distance", "timestamp - ")
                     .WithCause(
                         "soon") },
                 { "Minor",
                     new IssueTemplate(Issue.Level.Minor,
-                        "{0} Edge dash ({1})",
-                        "timestamp - ", "distance")
+                        "{0} Edge dash ({1}px to hyperdash to {2})",
+                        "timestamp - ", "distance", "timestamp - ")
                     .WithCause(
                         "soon") }
             };
@@ -79,28 +79,31 @@ namespace CatchCheck.Check.Compose
             for (var i = 0; i < catchObjects.Count; i++) {
                 CatchHitObject currentObject = catchObjects[i];
 
-                var distanceToHDash = currentObject.DistanceToHyperDash;
+                var distanceToHDash = Math.Round(currentObject.PixelsToHyperDash);
                 if (distanceToHDash == 0) { continue; }
                 if (distanceToHDash < 25) {
                     yield return new Issue(
                         GetTemplate("Problem"),
                         aBeatmap,
-                        Timestamp.Get(currentObject.time),
-                        distanceToHDash
+                        Timestamp.Get(currentObject),
+                        distanceToHDash,
+                        Timestamp.Get(catchObjects[i+1])
                     ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal, Beatmap.Difficulty.Hard);
 
                     yield return new Issue(
                         GetTemplate("Warning"),
                         aBeatmap,
-                        Timestamp.Get(currentObject.time),
-                        distanceToHDash
+                        Timestamp.Get(currentObject),
+                        distanceToHDash,
+                        Timestamp.Get(catchObjects[i+1])
                     ).ForDifficulties(Beatmap.Difficulty.Insane, Beatmap.Difficulty.Expert, Beatmap.Difficulty.Ultra);
                 } else if (distanceToHDash < 50) {
                     yield return new Issue(
                         GetTemplate("Minor"),
                         aBeatmap,
-                        Timestamp.Get(currentObject.time),
-                        distanceToHDash
+                        Timestamp.Get(currentObject),
+                        distanceToHDash,
+                        Timestamp.Get(catchObjects[i+1])
                     );
                 }
             }
