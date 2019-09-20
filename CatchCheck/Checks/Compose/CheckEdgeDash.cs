@@ -26,7 +26,7 @@ namespace CatchCheck.Check.Compose
             },
 
             Category = "Compose",
-            Message = "Edge Dashes.",
+            Message = "Edge dashes.",
             Author = "-Keitaro",
 
             Documentation = new Dictionary<string, string>()
