@@ -69,6 +69,42 @@ namespace CatchCheck.Check.Compose
             };
         }
 
+        public IEnumerable<Issue> GenerateIssue(Beatmap aBeatmap, CatchHitObject currentObject, CatchHitObject nextObject, double distanceToHDash, bool isFirstNode, bool isSecondNode)
+        {
+            string objectTimestamp;
+            string nodeTimestamp;
+            if (isFirstNode) objectTimestamp = Timestamp.Get(currentObject.time);
+            else objectTimestamp = Timestamp.Get(currentObject);
+            if (isSecondNode) nodeTimestamp = Timestamp.Get(nextObject.time);
+            else nodeTimestamp = Timestamp.Get(nextObject);
+
+            if (distanceToHDash < 10) {
+                yield return new Issue(
+                    GetTemplate("Problem"),
+                    aBeatmap,
+                    objectTimestamp,
+                    distanceToHDash,
+                    nodeTimestamp
+                ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal, Beatmap.Difficulty.Hard);
+
+                yield return new Issue(
+                    GetTemplate("Warning"),
+                    aBeatmap,
+                    objectTimestamp,
+                    distanceToHDash,
+                    nodeTimestamp
+                ).ForDifficulties(Beatmap.Difficulty.Insane, Beatmap.Difficulty.Expert, Beatmap.Difficulty.Ultra);
+            } else if (distanceToHDash < 20) {
+                yield return new Issue(
+                    GetTemplate("Minor"),
+                    aBeatmap,
+                    objectTimestamp,
+                    distanceToHDash,
+                    nodeTimestamp
+                );
+            }
+        }
+
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
             var FruitsObjectManager = new ObjectManager();
@@ -78,33 +114,44 @@ namespace CatchCheck.Check.Compose
 
             for (var i = 0; i < catchObjects.Count; i++) {
                 CatchHitObject currentObject = catchObjects[i];
+                CatchHitObject nextObject;
 
-                var distanceToHDash = Math.Round(currentObject.PixelsToHyperDash);
+                var distanceToHDash = Math.Ceiling(currentObject.PixelsToHyperDash);
                 if (distanceToHDash == 0) { continue; }
-                if (distanceToHDash < 25) {
-                    yield return new Issue(
-                        GetTemplate("Problem"),
-                        aBeatmap,
-                        Timestamp.Get(currentObject),
-                        distanceToHDash,
-                        Timestamp.Get(catchObjects[i+1])
-                    ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal, Beatmap.Difficulty.Hard);
 
-                    yield return new Issue(
-                        GetTemplate("Warning"),
-                        aBeatmap,
-                        Timestamp.Get(currentObject),
-                        distanceToHDash,
-                        Timestamp.Get(catchObjects[i+1])
-                    ).ForDifficulties(Beatmap.Difficulty.Insane, Beatmap.Difficulty.Expert, Beatmap.Difficulty.Ultra);
-                } else if (distanceToHDash < 50) {
-                    yield return new Issue(
-                        GetTemplate("Minor"),
-                        aBeatmap,
-                        Timestamp.Get(currentObject),
-                        distanceToHDash,
-                        Timestamp.Get(catchObjects[i+1])
-                    );
+                // If object is not a slider, just pick next object
+                if (currentObject.Extras == null) nextObject = catchObjects[i+1];
+                // else pick first node (either slider tick or tail)
+                else nextObject = currentObject.Extras[0];
+
+                foreach (Issue aIssue in GenerateIssue(aBeatmap, currentObject, nextObject, distanceToHDash, false, false))
+                {
+                    yield return aIssue;
+                }
+
+                if (currentObject.Extras == null) { continue; }
+                for (var j = 0; j < currentObject.Extras.Count; j++) {
+                    CatchHitObject currentNode = currentObject.Extras[j];
+
+                    distanceToHDash = Math.Ceiling(currentNode.PixelsToHyperDash);
+                    if (distanceToHDash == 0) { continue; }
+                    CatchHitObject nextNode;
+                    bool isNode;
+
+                    if (j == currentObject.Extras.Count - 1) {
+                        // If current node is a tail, then select next object
+                        nextNode = catchObjects[i+1];
+                        isNode = false;
+                    }
+                    else {
+                        // else select next node.
+                        nextNode = currentObject.Extras[j+1];
+                        isNode = true;
+                    }
+                    foreach (Issue aIssue in GenerateIssue(aBeatmap, currentNode, nextNode, distanceToHDash, true, isNode))
+                    {
+                        yield return aIssue;
+                    }
                 }
             }
         }
