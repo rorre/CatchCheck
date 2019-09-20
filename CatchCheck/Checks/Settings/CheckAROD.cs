@@ -25,7 +25,7 @@ namespace CatchCheck.Check.Settings
             },
 
             Category = "Compose",
-            Message = "Settings equality.",
+            Message = "Settings inequality.",
             Author = "-Keitaro",
 
             Documentation = new Dictionary<string, string>()
