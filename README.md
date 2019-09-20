@@ -7,10 +7,10 @@ osu!catch plugin for mapset verifier
 - Hyperdash
 - Combo limit
 - AR = OD check
+- Spinner presence
 
 \* if previous or next object is a spinner then it will be count as minor because it's not a problem at all.
 
 ## TODO
 - Edge dash to hyperdash/dash (Rain + Overdose) *may or may not happen*
 - ~~Dash (very unlikely)~~ No
-- Spinner presence
