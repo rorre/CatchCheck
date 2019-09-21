@@ -54,16 +54,16 @@ namespace CatchCheck.Check.Compose
                         "timestamp - ", "timestamp - ")
                     .WithCause(
                         "soon") },
+                { "Problem Node",
+                    new IssueTemplate(Issue.Level.Problem,
+                        "{0} Hyperdash on {1}.",
+                        "timestamp - ", "timestamp - ")
+                    .WithCause(
+                        "soon") },
                 { "Problem Time",
                     new IssueTemplate(Issue.Level.Problem,
                         "{0} Hyperdash duration ({1}ms, expected {2}ms).",
                         "timestamp - ", "duration", "duration")
-                    .WithCause(
-                        "soon") },
-                { "Problem Dashes",
-                    new IssueTemplate(Issue.Level.Problem,
-                        "{0} {1} Consecutive hyperdashes.",
-                        "timestamp - ", "amount")
                     .WithCause(
                         "soon") }
             };
@@ -80,7 +80,7 @@ namespace CatchCheck.Check.Compose
                 CatchHitObject currentObject = catchObjects[i];
             
                 // Skip object that doesn't use HDash
-                if (!currentObject.HyperDash) { continue; }
+                if (!currentObject.HyperDash) continue;
 
                 // No HDash on Cup and Platter
                 yield return new Issue(
@@ -112,6 +112,19 @@ namespace CatchCheck.Check.Compose
                         delta,
                         125
                     ).ForDifficulties(Beatmap.Difficulty.Hard);
+                }
+
+                if (currentObject.Extras == null ) continue;
+                for (var j = 0; j < currentObject.Extras.Count; j++)
+                {
+                    CatchHitObject currentNode = currentObject.Extras[j];
+                    if (!currentNode.HyperDash) continue;
+                    yield return new Issue(
+                        GetTemplate("Problem Node"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject),
+                        Timestamp.Get(currentNode)
+                    ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal, Beatmap.Difficulty.Hard);
                 }
             }
         }
