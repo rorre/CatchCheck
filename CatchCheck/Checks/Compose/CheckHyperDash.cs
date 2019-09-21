@@ -123,7 +123,7 @@ namespace CatchCheck.Check.Compose
                         GetTemplate("Problem Node"),
                         aBeatmap,
                         Timestamp.Get(currentObject),
-                        Timestamp.Get(currentNode)
+                        Timestamp.Get(currentNode.time)
                     ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal, Beatmap.Difficulty.Hard);
                 }
             }
