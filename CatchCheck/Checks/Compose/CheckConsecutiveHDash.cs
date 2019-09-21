@@ -15,7 +15,7 @@ using MapsetVerifierFramework.objects.attributes;
 namespace CatchCheck.Check.Compose
 {
     [Check]
-    public class CheckHyperDash : BeatmapCheck
+    public class CheckConsecutiveHDash : BeatmapCheck
     {
         
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
@@ -26,7 +26,7 @@ namespace CatchCheck.Check.Compose
             },
 
             Category = "Compose",
-            Message = "Hyperdashes.",
+            Message = "Consecutive hyperdashes.",
             Author = "-Keitaro",
 
             Documentation = new Dictionary<string, string>()
@@ -48,18 +48,6 @@ namespace CatchCheck.Check.Compose
         {
             return new Dictionary<string, IssueTemplate>()
             {
-                { "Problem",
-                    new IssueTemplate(Issue.Level.Problem,
-                        "{0} Hyperdash to {1}",
-                        "timestamp - ", "timestamp - ")
-                    .WithCause(
-                        "soon") },
-                { "Problem Time",
-                    new IssueTemplate(Issue.Level.Problem,
-                        "{0} Hyperdash duration ({1}ms, expected {2}ms).",
-                        "timestamp - ", "duration", "duration")
-                    .WithCause(
-                        "soon") },
                 { "Problem Dashes",
                     new IssueTemplate(Issue.Level.Problem,
                         "{0} {1} Consecutive hyperdashes.",
@@ -75,42 +63,32 @@ namespace CatchCheck.Check.Compose
             
             List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
             FruitsObjectManager.initialiseHypers(catchObjects, aBeatmap);
-
+            var count = 0;
             for (var i = 0; i < catchObjects.Count; i++) {
                 CatchHitObject currentObject = catchObjects[i];
-            
-                // Skip object that doesn't use HDash
-                if (!currentObject.HyperDash) { continue; }
-
-                // No HDash on Cup and Platter
-                yield return new Issue(
-                    GetTemplate("Problem"),
-                    aBeatmap,
-                    Timestamp.Get(currentObject),
-                    Timestamp.Get(currentObject.HyperDashTarget)
-                ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal);
                 
-                double delta = currentObject.HyperDashTarget.time - currentObject.time;
-
-                if (delta < 62) {
-                    // 62ms length minimum for Rain
-                    yield return new Issue(
-                        GetTemplate("Problem Time"),
-                        aBeatmap,
-                        Timestamp.Get(currentObject),
-                        delta,
-                        62
-                    ).ForDifficulties(Beatmap.Difficulty.Insane);
+                if (currentObject.HyperDash){
+                    count++;
+                    continue;
                 }
                 
-                if (delta < 125) {
-                    // 125ms length minimum for Platter
+                if (count >= 4) {
+                    // 4 and more consecutive HDashes isn't allowed in Rain
                     yield return new Issue(
-                        GetTemplate("Problem Time"),
+                        GetTemplate("Problem Dashes"),
                         aBeatmap,
-                        Timestamp.Get(currentObject),
-                        delta,
-                        125
+                        Timestamp.Get(currentObject.time),
+                        count
+                    ).ForDifficulties(Beatmap.Difficulty.Insane);
+                }
+
+                if (count >= 2) {
+                    // 2 and more consecutive HDashes isn't allowed in Platter
+                    yield return new Issue(
+                        GetTemplate("Problem Dashes"),
+                        aBeatmap,
+                        Timestamp.Get(currentObject.time),
+                        count
                     ).ForDifficulties(Beatmap.Difficulty.Hard);
                 }
             }
