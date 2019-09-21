@@ -17,9 +17,9 @@ namespace CatchCheck.Check.Compose
     [Check]
     public class CheckEdgeDash : BeatmapCheck
     {
-        
+
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
-        {   
+        {
             Modes = new Beatmap.Mode[]
             {
                 Beatmap.Mode.Catch
@@ -54,7 +54,7 @@ namespace CatchCheck.Check.Compose
                         "timestamp - ", "distance", "timestamp - ")
                     .WithCause(
                         "soon") },
-				{ "Problem",
+                { "Problem",
                     new IssueTemplate(Issue.Level.Problem,
                         "{0} Edge dash ({1}px to hyperdash to {2})",
                         "timestamp - ", "distance", "timestamp - ")
@@ -78,7 +78,8 @@ namespace CatchCheck.Check.Compose
             if (isSecondNode) nodeTimestamp = Timestamp.Get(nextObject.time);
             else nodeTimestamp = Timestamp.Get(nextObject);
 
-            if (distanceToHDash < 10) {
+            if (distanceToHDash < 10)
+            {
                 yield return new Issue(
                     GetTemplate("Problem"),
                     aBeatmap,
@@ -94,7 +95,9 @@ namespace CatchCheck.Check.Compose
                     distanceToHDash,
                     nodeTimestamp
                 ).ForDifficulties(Beatmap.Difficulty.Insane, Beatmap.Difficulty.Expert, Beatmap.Difficulty.Ultra);
-            } else if (distanceToHDash < 20) {
+            }
+            else if (distanceToHDash < 20)
+            {
                 yield return new Issue(
                     GetTemplate("Minor"),
                     aBeatmap,
@@ -108,11 +111,12 @@ namespace CatchCheck.Check.Compose
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
             var FruitsObjectManager = new ObjectManager();
-            
+
             List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
             FruitsObjectManager.initialiseHypers(catchObjects, aBeatmap);
 
-            for (var i = 0; i < catchObjects.Count; i++) {
+            for (var i = 0; i < catchObjects.Count; i++)
+            {
                 CatchHitObject currentObject = catchObjects[i];
                 CatchHitObject nextObject;
 
@@ -120,7 +124,7 @@ namespace CatchCheck.Check.Compose
                 if (distanceToHDash == 0) { continue; }
 
                 // If object is not a slider, just pick next object
-                if (currentObject.Extras == null) nextObject = catchObjects[i+1];
+                if (currentObject.Extras == null) nextObject = catchObjects[i + 1];
                 // else pick first node (either slider tick or tail)
                 else nextObject = currentObject.Extras[0];
 
@@ -130,7 +134,8 @@ namespace CatchCheck.Check.Compose
                 }
 
                 if (currentObject.Extras == null) { continue; }
-                for (var j = 0; j < currentObject.Extras.Count; j++) {
+                for (var j = 0; j < currentObject.Extras.Count; j++)
+                {
                     CatchHitObject currentNode = currentObject.Extras[j];
 
                     distanceToHDash = Math.Ceiling(currentNode.PixelsToHyperDash);
@@ -138,14 +143,16 @@ namespace CatchCheck.Check.Compose
                     CatchHitObject nextNode;
                     bool isNode;
 
-                    if (j == currentObject.Extras.Count - 1) {
+                    if (j == currentObject.Extras.Count - 1)
+                    {
                         // If current node is a tail, then select next object
-                        nextNode = catchObjects[i+1];
+                        nextNode = catchObjects[i + 1];
                         isNode = false;
                     }
-                    else {
+                    else
+                    {
                         // else select next node.
-                        nextNode = currentObject.Extras[j+1];
+                        nextNode = currentObject.Extras[j + 1];
                         isNode = true;
                     }
                     foreach (Issue aIssue in GenerateIssue(aBeatmap, currentNode, nextNode, distanceToHDash, true, isNode))

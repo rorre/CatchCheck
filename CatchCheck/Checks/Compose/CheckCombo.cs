@@ -18,7 +18,7 @@ namespace CatchCheck.Check.Compose
     public class CheckCombo : BeatmapCheck
     {
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
-        {   
+        {
             Modes = new Beatmap.Mode[]
             {
                 Beatmap.Mode.Catch
@@ -58,16 +58,16 @@ namespace CatchCheck.Check.Compose
         }
 
         public enum Type
-            {
-                Circle        = 1,
-                Slider        = 2,
-                NewCombo      = 4,
-                Spinner       = 8,
-                ComboSkip1    = 16,
-                ComboSkip2    = 32,
-                ComboSkip3    = 64,
-                ManiaHoldNote = 128
-            }
+        {
+            Circle = 1,
+            Slider = 2,
+            NewCombo = 4,
+            Spinner = 8,
+            ComboSkip1 = 16,
+            ComboSkip2 = 32,
+            ComboSkip3 = 64,
+            ManiaHoldNote = 128
+        }
 
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
@@ -75,7 +75,7 @@ namespace CatchCheck.Check.Compose
             CatchHitObject startObject;
             CatchHitObject currentObject;
             var FruitsObjectManager = new ObjectManager();
-            
+
             List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
             startObject = catchObjects[0];
             for (var i = 1; i < catchObjects.Count; i++)
@@ -134,10 +134,10 @@ namespace CatchCheck.Check.Compose
                     startObject = currentObject;
                     count = 1;
                 }
-                    else
+                else
                 {
                     count++;
-                    if (currentObject.Extras == null) {continue;}
+                    if (currentObject.Extras == null) { continue; }
                     count += currentObject.Extras.Count;
                 }
             }

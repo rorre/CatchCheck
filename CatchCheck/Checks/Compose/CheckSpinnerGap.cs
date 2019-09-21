@@ -18,7 +18,7 @@ namespace CatchCheck.Check.Compose
     public class CheckSpinnerGap : BeatmapCheck
     {
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
-        {   
+        {
             Modes = new Beatmap.Mode[]
             {
                 Beatmap.Mode.Catch
@@ -42,7 +42,7 @@ namespace CatchCheck.Check.Compose
                 }
             }
         };
-        
+
         public override Dictionary<string, IssueTemplate> GetTemplates()
         {
             return new Dictionary<string, IssueTemplate>()
@@ -85,42 +85,48 @@ namespace CatchCheck.Check.Compose
             float requirePreviousTime = 0.0f;
             float requireNextTime = 0.0f;
 
-            for (var i = 0; i < aBeatmap.hitObjects.Count; i++) {
+            for (var i = 0; i < aBeatmap.hitObjects.Count; i++)
+            {
                 var nextTime = 0.0;
                 var previousTime = 0.0;
                 hitObject = aBeatmap.hitObjects[i];
 
-                if (hitObject is Spinner) {
+                if (hitObject is Spinner)
+                {
                     bool isPreviousSpinner = false;
                     bool isNextSpinner = false;
 
-                    if (i-1 >= 0) {
-                        var previousObject = aBeatmap.hitObjects[i-1];
+                    if (i - 1 >= 0)
+                    {
+                        var previousObject = aBeatmap.hitObjects[i - 1];
                         previousTime = hitObject.time - previousObject.time;
                         isPreviousSpinner = previousObject is Spinner;
                     }
 
-                    if (i+1 < aBeatmap.hitObjects.Count) {
-                        var nextObject = aBeatmap.hitObjects[i+1];
+                    if (i + 1 < aBeatmap.hitObjects.Count)
+                    {
+                        var nextObject = aBeatmap.hitObjects[i + 1];
                         nextTime = nextObject.time - hitObject.GetEndTime();
                         isNextSpinner = nextObject is Spinner;
                     }
 
-                    if (previousTime < 62 && previousTime != 0.0) {
+                    if (previousTime < 62 && previousTime != 0.0)
+                    {
                         if (isPreviousSpinner)
-                        yield return new Issue(
-                            GetTemplate(GetKind(isPreviousSpinner) + " Previous"),
-                            aBeatmap,
-                            Timestamp.Get(hitObject),
-                            $"{(int)previousTime}",
-                            $"{(int)requirePreviousTime}"
-                        ).ForDifficulties(
-                            Beatmap.Difficulty.Expert,
-                            Beatmap.Difficulty.Ultra
-                        );
+                            yield return new Issue(
+                                GetTemplate(GetKind(isPreviousSpinner) + " Previous"),
+                                aBeatmap,
+                                Timestamp.Get(hitObject),
+                                $"{(int)previousTime}",
+                                $"{(int)requirePreviousTime}"
+                            ).ForDifficulties(
+                                Beatmap.Difficulty.Expert,
+                                Beatmap.Difficulty.Ultra
+                            );
                     }
-                    
-                    if (previousTime < 125 && previousTime != 0.0) {
+
+                    if (previousTime < 125 && previousTime != 0.0)
+                    {
                         yield return new Issue(
                             GetTemplate(GetKind(isPreviousSpinner) + " Previous"),
                             aBeatmap,
@@ -135,7 +141,8 @@ namespace CatchCheck.Check.Compose
                         );
                     }
 
-                    if (nextTime < 125 && nextTime != 0.0) {
+                    if (nextTime < 125 && nextTime != 0.0)
+                    {
                         yield return new Issue(
                             GetTemplate(GetKind(isNextSpinner) + " Next"),
                             aBeatmap,
@@ -148,8 +155,9 @@ namespace CatchCheck.Check.Compose
                             Beatmap.Difficulty.Ultra
                         );
                     }
-                    
-                    if (nextTime < 250 && nextTime != 0.0) {
+
+                    if (nextTime < 250 && nextTime != 0.0)
+                    {
                         yield return new Issue(
                             GetTemplate(GetKind(isNextSpinner) + " Next"),
                             aBeatmap,

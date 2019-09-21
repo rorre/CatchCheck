@@ -11,7 +11,7 @@ namespace CatchCheck
     public class CatchHitObject : HitObject
     {
 
-        public CatchHitObject(string[] anArgs, Beatmap aBeatmap) : base (anArgs, aBeatmap)
+        public CatchHitObject(string[] anArgs, Beatmap aBeatmap) : base(anArgs, aBeatmap)
         {
             x = Position.X;
         }
@@ -22,7 +22,7 @@ namespace CatchCheck
         public bool HyperDash => HyperDashTarget != null;
         public CatchHitObject HyperDashTarget;
         public List<CatchHitObject> Extras { get; set; }
-  
+
     }
 
     public class ObjectManager
@@ -96,12 +96,13 @@ namespace CatchCheck
                 // If object isnt Slider, just skip it
                 if (currentObject.Extras == null) { continue; }
 
-                foreach (var sliderNode in currentObject.Extras) {
+                foreach (var sliderNode in currentObject.Extras)
+                {
                     objectWithDroplets.Add(sliderNode);
                 }
             }
             objectWithDroplets.Sort((h1, h2) => h1.time.CompareTo(h2.time));
-            
+
             // Taken from Modding Assistant as osu-lazer seems broken
             // https://github.com/rorre/decompiled-MA/blob/master/Modding%20assistant/osu/DiffCalc/BeatmapDifficultyCalculatorFruits.cs
             double adjustDiff = (aBeatmap.difficultySettings.circleSize - 5.0) / 5.0;

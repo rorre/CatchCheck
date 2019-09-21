@@ -18,7 +18,7 @@ namespace CatchCheck.Check.Settings
     public class CheckAROD : BeatmapCheck
     {
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
-        {   
+        {
             Modes = new Beatmap.Mode[]
             {
                 Beatmap.Mode.Catch

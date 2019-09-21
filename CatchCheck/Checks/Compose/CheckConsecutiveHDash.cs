@@ -17,9 +17,9 @@ namespace CatchCheck.Check.Compose
     [Check]
     public class CheckConsecutiveHDash : BeatmapCheck
     {
-        
+
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
-        {   
+        {
             Modes = new Beatmap.Mode[]
             {
                 Beatmap.Mode.Catch
@@ -60,19 +60,22 @@ namespace CatchCheck.Check.Compose
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
             var FruitsObjectManager = new ObjectManager();
-            
+
             List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
             FruitsObjectManager.initialiseHypers(catchObjects, aBeatmap);
             var count = 0;
-            for (var i = 0; i < catchObjects.Count; i++) {
+            for (var i = 0; i < catchObjects.Count; i++)
+            {
                 CatchHitObject currentObject = catchObjects[i];
-                
-                if (currentObject.HyperDash){
+
+                if (currentObject.HyperDash)
+                {
                     count++;
                     continue;
                 }
-                
-                if (count >= 4) {
+
+                if (count >= 4)
+                {
                     // 4 and more consecutive HDashes isn't allowed in Rain
                     yield return new Issue(
                         GetTemplate("Problem Dashes"),
@@ -82,7 +85,8 @@ namespace CatchCheck.Check.Compose
                     ).ForDifficulties(Beatmap.Difficulty.Insane);
                 }
 
-                if (count >= 2) {
+                if (count >= 2)
+                {
                     // 2 and more consecutive HDashes isn't allowed in Platter
                     yield return new Issue(
                         GetTemplate("Problem Dashes"),

@@ -17,9 +17,9 @@ namespace CatchCheck.Check.Compose
     [Check]
     public class CheckHyperDash : BeatmapCheck
     {
-        
+
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
-        {   
+        {
             Modes = new Beatmap.Mode[]
             {
                 Beatmap.Mode.Catch
@@ -72,13 +72,14 @@ namespace CatchCheck.Check.Compose
         public override IEnumerable<Issue> GetIssues(Beatmap aBeatmap)
         {
             var FruitsObjectManager = new ObjectManager();
-            
+
             List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
             FruitsObjectManager.initialiseHypers(catchObjects, aBeatmap);
 
-            for (var i = 0; i < catchObjects.Count; i++) {
+            for (var i = 0; i < catchObjects.Count; i++)
+            {
                 CatchHitObject currentObject = catchObjects[i];
-            
+
                 // Skip object that doesn't use HDash
                 if (!currentObject.HyperDash) continue;
 
@@ -89,10 +90,11 @@ namespace CatchCheck.Check.Compose
                     Timestamp.Get(currentObject),
                     Timestamp.Get(currentObject.HyperDashTarget)
                 ).ForDifficulties(Beatmap.Difficulty.Easy, Beatmap.Difficulty.Normal);
-                
+
                 double delta = currentObject.HyperDashTarget.time - currentObject.time;
 
-                if (delta < 62) {
+                if (delta < 62)
+                {
                     // 62ms length minimum for Rain
                     yield return new Issue(
                         GetTemplate("Problem Time"),
@@ -102,8 +104,9 @@ namespace CatchCheck.Check.Compose
                         62
                     ).ForDifficulties(Beatmap.Difficulty.Insane);
                 }
-                
-                if (delta < 125) {
+
+                if (delta < 125)
+                {
                     // 125ms length minimum for Platter
                     yield return new Issue(
                         GetTemplate("Problem Time"),
@@ -114,7 +117,7 @@ namespace CatchCheck.Check.Compose
                     ).ForDifficulties(Beatmap.Difficulty.Hard);
                 }
 
-                if (currentObject.Extras == null ) continue;
+                if (currentObject.Extras == null) continue;
                 for (var j = 0; j < currentObject.Extras.Count; j++)
                 {
                     CatchHitObject currentNode = currentObject.Extras[j];
