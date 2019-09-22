@@ -121,7 +121,7 @@ namespace CatchCheck.Check.Compose
                 CatchHitObject nextObject;
 
                 var distanceToHDash = Math.Ceiling(currentObject.PixelsToHyperDash);
-                if (distanceToHDash == 0) { continue; }
+                if (distanceToHDash == 0) continue;
 
                 // If object is not a slider, just pick next object
                 if (currentObject.Extras == null) nextObject = catchObjects[i + 1];
@@ -133,13 +133,13 @@ namespace CatchCheck.Check.Compose
                     yield return aIssue;
                 }
 
-                if (currentObject.Extras == null) { continue; }
+                if (currentObject.Extras == null) continue;
                 for (var j = 0; j < currentObject.Extras.Count; j++)
                 {
                     CatchHitObject currentNode = currentObject.Extras[j];
 
                     distanceToHDash = Math.Ceiling(currentNode.PixelsToHyperDash);
-                    if (distanceToHDash == 0) { continue; }
+                    if (distanceToHDash == 0) continue;
                     CatchHitObject nextNode;
                     bool isNode;
 

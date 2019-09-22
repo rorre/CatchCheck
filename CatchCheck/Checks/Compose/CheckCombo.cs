@@ -81,8 +81,11 @@ namespace CatchCheck.Check.Compose
             for (var i = 1; i < catchObjects.Count; i++)
             {
                 currentObject = catchObjects[i];
+
+                // Parse hitobject types as we can't check flags
                 string[] objectCodeArgs = currentObject.code.Split(',');
                 Type objectTypes = (Type)int.Parse(objectCodeArgs[3]);
+
                 if (objectTypes.HasFlag(Type.NewCombo) || i == catchObjects.Count - 1)
                 {
                     if (count > 8)
@@ -96,6 +99,7 @@ namespace CatchCheck.Check.Compose
                             Beatmap.Difficulty.Easy
                         );
                     }
+                    
                     if (count > 10)
                     {
                         yield return new Issue(
@@ -107,6 +111,7 @@ namespace CatchCheck.Check.Compose
                             Beatmap.Difficulty.Normal
                         );
                     }
+                    
                     if (count > 12)
                     {
                         yield return new Issue(
@@ -118,6 +123,7 @@ namespace CatchCheck.Check.Compose
                             Beatmap.Difficulty.Hard
                         );
                     }
+                    
                     if (count > 16)
                     {
                         yield return new Issue(
@@ -137,7 +143,7 @@ namespace CatchCheck.Check.Compose
                 else
                 {
                     count++;
-                    if (currentObject.Extras == null) { continue; }
+                    if (currentObject.Extras == null) continue;
                     count += currentObject.Extras.Count;
                 }
             }

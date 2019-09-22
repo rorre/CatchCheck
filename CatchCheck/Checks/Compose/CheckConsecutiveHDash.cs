@@ -95,6 +95,7 @@ namespace CatchCheck.Check.Compose
                         count
                     ).ForDifficulties(Beatmap.Difficulty.Hard);
                 }
+                count = 0;
             }
         }
     }
