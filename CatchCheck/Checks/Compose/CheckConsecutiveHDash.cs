@@ -64,6 +64,7 @@ namespace CatchCheck.Check.Compose
             List<CatchHitObject> catchObjects = FruitsObjectManager.GenerateCatchObjects(aBeatmap);
             FruitsObjectManager.initialiseHypers(catchObjects, aBeatmap);
             var count = 0;
+            var finalcount = 0;
             for (var i = 0; i < catchObjects.Count; i++)
             {
                 CatchHitObject currentObject = catchObjects[i];
@@ -73,29 +74,32 @@ namespace CatchCheck.Check.Compose
                     count++;
                     continue;
                 }
+                
+                finalcount = count;
+                count = 0;
 
-                if (count >= 4)
+                if (finalcount >= 4)
                 {
                     // 4 and more consecutive HDashes isn't allowed in Rain
                     yield return new Issue(
                         GetTemplate("Problem Dashes"),
                         aBeatmap,
                         Timestamp.Get(currentObject.time),
-                        count
+                        finalcount
                     ).ForDifficulties(Beatmap.Difficulty.Insane);
                 }
 
-                if (count >= 2)
+                if (finalcount >= 2)
                 {
                     // 2 and more consecutive HDashes isn't allowed in Platter
                     yield return new Issue(
                         GetTemplate("Problem Dashes"),
                         aBeatmap,
                         Timestamp.Get(currentObject.time),
-                        count
+                        finalcount
                     ).ForDifficulties(Beatmap.Difficulty.Hard);
                 }
-                count = 0;
+                
             }
         }
     }
